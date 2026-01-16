@@ -7,8 +7,8 @@ import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:tflite_flutter/tflite_flutter.dart' as tflite;
 import '../service/pose_detector_service.dart';
 import '../painter/pose_painter.dart';
-import '../models/workout.dart';
 import '../service/workout_service.dart';
+ // PERBAIKAN: Import model yang benar
 
 // Alias untuk menghindari conflict
 import '../service/workout_service.dart' as ws;
@@ -96,13 +96,18 @@ class _CameraScreenState extends State<CameraScreen> {
         modelPath = 'assets/models/shoulder_press/shoulder_press_model.tflite';
       }
       
-      _tfliteInterpreter = await tflite.Interpreter.fromAsset(modelPath);
-      _isTfliteLoaded = true;
-      
-      print('TFLite model loaded: ${widget.exerciseType}');
+      // PERBAIKAN: Tambahkan error handling untuk asset yang tidak ditemukan
+      try {
+        _tfliteInterpreter = await tflite.Interpreter.fromAsset(modelPath);
+        _isTfliteLoaded = true;
+        debugPrint('TFLite model loaded: ${widget.exerciseType}');
+      } catch (e) {
+        debugPrint('Error loading TFLite model from asset: $e');
+        _isTfliteLoaded = false;
+      }
     } catch (e) {
-      print('Error loading TFLite model: $e');
-      // Fallback ke ML Kit saja
+      debugPrint('Error in _loadTfliteModel: $e');
+      _isTfliteLoaded = false;
     }
   }
   
@@ -127,10 +132,14 @@ class _CameraScreenState extends State<CameraScreen> {
       }
       
       // Use front camera for better user experience
-      final camera = cameras.firstWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.front,
-        orElse: () => cameras.first,
-      );
+      CameraDescription camera;
+      try {
+        camera = cameras.firstWhere(
+          (cam) => cam.lensDirection == CameraLensDirection.front,
+        );
+      } catch (e) {
+        camera = cameras.first; // Fallback ke kamera pertama
+      }
       
       // Initialize camera controller
       _cameraController = CameraController(
@@ -152,22 +161,23 @@ class _CameraScreenState extends State<CameraScreen> {
       });
       
     } catch (e) {
+      debugPrint("Error initializing camera: $e");
       setState(() {
-        _feedbackMessage = "Error initializing camera: $e";
+        _feedbackMessage = "Error initializing camera: ${e.toString()}";
       });
     }
   }
   
   // Process pose dengan TFLite model
   Future<Map<String, dynamic>?> _processWithTflite(List<double> normalizedKeypoints) async {
-    if (!_isTfliteLoaded || normalizedKeypoints.length < 51) { // 17 keypoints * 3 (x, y, confidence)
+    if (!_isTfliteLoaded || normalizedKeypoints.length < 51) {
       return null;
     }
     
     try {
       // Reshape input untuk model
-      final input = normalizedKeypoints.reshape([1, normalizedKeypoints.length]);
-      final output = List.filled(1, List.filled(1, 0.0));
+      final input = [normalizedKeypoints];
+      final output = List.filled(1, List<double>.filled(1, 0.0));
       
       // Run inference
       _tfliteInterpreter.run(input, output);
@@ -183,7 +193,7 @@ class _CameraScreenState extends State<CameraScreen> {
         'feedback': _generateFeedback(prediction, thresholds),
       };
     } catch (e) {
-      print('TFLite inference error: $e');
+      debugPrint('TFLite inference error: $e');
       return null;
     }
   }
@@ -279,8 +289,8 @@ class _CameraScreenState extends State<CameraScreen> {
             'is_correct_form': isCorrectForm,
             'form_confidence': formConfidence,
             'angles': {
-              'left_knee': poseData.getLeftKneeAngle().toInt(),
-              'right_knee': poseData.getRightKneeAngle().toInt(),
+              'left_knee': poseData.leftKneeAngle?.toInt() ?? 0,
+              'right_knee': poseData.rightKneeAngle?.toInt() ?? 0,
             },
             'aiFeedback': aiFeedback,
           });
@@ -303,7 +313,7 @@ class _CameraScreenState extends State<CameraScreen> {
         });
       }
     } catch (e) {
-      print('Error processing image: $e');
+      debugPrint('Error processing image: $e');
     } finally {
       _isProcessing = false;
     }
@@ -333,6 +343,7 @@ class _CameraScreenState extends State<CameraScreen> {
   
   Future<void> _completeWorkout() async {
     if (_repCount == 0) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Lakukan setidaknya 1 rep sebelum menyelesaikan'),
@@ -384,6 +395,8 @@ class _CameraScreenState extends State<CameraScreen> {
         },
       );
       
+      if (!mounted) return;
+      
       if (result['success'] == true) {
         Navigator.pop(context, true);
       } else {
@@ -395,9 +408,10 @@ class _CameraScreenState extends State<CameraScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: $e'),
+          content: Text('Error: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -426,7 +440,7 @@ class _CameraScreenState extends State<CameraScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: _isInitialized && _cameraController != null
+        child: _isInitialized && _cameraController != null && _cameraController!.value.isInitialized
             ? Stack(
                 children: [
                   // Camera Preview
@@ -542,8 +556,8 @@ class _CameraScreenState extends State<CameraScreen> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.timer, color: Colors.white, size: 14),
-                              SizedBox(width: 6),
+                              const Icon(Icons.timer, color: Colors.white, size: 14),
+                              const SizedBox(width: 6),
                               Text(
                                 'Duration',
                                 style: TextStyle(
@@ -553,7 +567,7 @@ class _CameraScreenState extends State<CameraScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             _formatDuration(_elapsedSeconds),
                             style: const TextStyle(
@@ -583,8 +597,8 @@ class _CameraScreenState extends State<CameraScreen> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.check_circle, color: Colors.green, size: 14),
-                              SizedBox(width: 6),
+                              const Icon(Icons.check_circle, color: Colors.green, size: 14),
+                              const SizedBox(width: 6),
                               Text(
                                 'Correct',
                                 style: TextStyle(
@@ -594,7 +608,7 @@ class _CameraScreenState extends State<CameraScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             '$_correctReps/$_repCount',
                             style: const TextStyle(
@@ -657,7 +671,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           children: [
                             if (_isTfliteLoaded)
                               const Icon(Icons.psychology, color: Colors.purple, size: 12),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Text(
                               _debugInfo,
                               style: const TextStyle(
@@ -685,7 +699,7 @@ class _CameraScreenState extends State<CameraScreen> {
                         child: Row(
                           children: [
                             const Icon(Icons.auto_awesome, color: Colors.white, size: 12),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             const Text(
                               'AI Active',
                               style: TextStyle(
@@ -746,7 +760,7 @@ class _CameraScreenState extends State<CameraScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton.icon(
@@ -777,20 +791,26 @@ class _CameraScreenState extends State<CameraScreen> {
                       color: Colors.blue,
                     ),
                     const SizedBox(height: 20),
-                    Text(
-                      _feedbackMessage,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        _feedbackMessage,
+                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      widget.workout.namaWorkout,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        widget.workout.namaWorkout,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),
                     if (!_isTfliteLoaded)
@@ -831,7 +851,7 @@ class _CameraScreenState extends State<CameraScreen> {
             size: isLarge ? 40 : 28,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           label,
           style: const TextStyle(
@@ -874,8 +894,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.auto_awesome, color: Colors.purple, size: 16),
-                        SizedBox(width: 8),
+                        const Icon(Icons.auto_awesome, color: Colors.purple, size: 16),
+                        const SizedBox(width: 8),
                         const Text(
                           'AI Features Active:',
                           style: TextStyle(

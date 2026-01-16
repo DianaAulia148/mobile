@@ -44,52 +44,39 @@ dependencies:
   # IMAGE & CAMERA
   # =========================
   image_picker: ^1.0.7
-  camera: ^0.11.0
-<<<<<<< HEAD
-  camera_platform_interface: ^2.12.3
-=======
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
-
+  camera: ^0.11.3
 
   # =========================
-  # POSE DETECTION (ML KIT)
+  # POSE DETECTION (ML KIT) - VERSI YANG KOMPATIBEL
   # =========================
-  google_mlkit_pose_detection: ^0.11.0
-
+  google_mlkit_pose_detection: ^0.12.0
+  google_mlkit_commons: ^0.8.1  # UPGRADE KE VERSI INI
 
   # =========================
   # TENSORFLOW LITE (AI MODEL)
   # =========================
-
-  # TFLite (AMAN UNTUK DART 3)
-  tflite_flutter: ^0.10.4
-<<<<<<< HEAD
-  tflite_flutter_helper: ^0.4.3+1
-=======
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
-
+  tflite_flutter: ^0.9.0  # Versi stabil
 
   # =========================
-  # MATH (ANGLE & GEOMETRY)
+  # MATH & GEOMETRY
   # =========================
   vector_math: ^2.1.4
   path_provider: ^2.1.0
-  vibration: ^1.7.5
 
   # =========================
-  # TEXT TO SPEECH (OPTIONAL)
+  # TEXT TO SPEECH
   # =========================
   flutter_tts: ^3.8.3
 
   # =========================
   # PERMISSIONS
   # =========================
-  permission_handler: ^11.0.1
-<<<<<<< HEAD
-  image: ^4.7.2
-  image_picker_for_web: ^1.0.2
-=======
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
+  permission_handler: ^11.0.1  # Downgrade ke versi stabil
+
+  # =========================
+  # VIBRATION
+  # =========================
+  vibration: ^1.7.5
 
 dev_dependencies:
   flutter_test:
@@ -100,13 +87,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/
     - assets/images/google_logo.png
-<<<<<<< HEAD
     - assets/models/push-up/pushup_model.tflite
-    - assets/models/push-up/meta.json
-    - assets/models/push-up/scaler.json
-    - assets/models/push-up/history.json
-=======
-    - assets/models/
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907

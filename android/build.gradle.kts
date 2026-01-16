@@ -1,24 +1,39 @@
-allprojects {
+buildscript {
+    ext.kotlin_version = "1.9.22" // Pastikan versi terbaru
     repositories {
         google()
         mavenCentral()
     }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.2.1") // Versi terbaru
+        classpath("com.google.gms:google-services:4.4.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    }
 }
 
-val newBuildDir: Directory =
-    rootProject.layout.buildDirectory
-        .dir("../../build")
-        .get()
-rootProject.layout.buildDirectory.value(newBuildDir)
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        // Tambahkan maven TensorFlow Lite jika perlu
+        maven {
+            url = uri("https://maven.google.com/")
+        }
+        maven {
+            url = uri("https://google.bintray.com/tensorflow")
+        }
+    }
+}
 
+rootProject.buildDir = "../build"
 subprojects {
-    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
-    project.layout.buildDirectory.value(newSubprojectBuildDir)
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
     project.evaluationDependsOn(":app")
 }
 
-tasks.register<Delete>("clean") {
-    delete(rootProject.layout.buildDirectory)
+tasks.register("clean", Delete::class) {
+    delete(rootProject.buildDir)
 }
