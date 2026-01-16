@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "36125771736",
+    "project_id": "gymgenz-5ca51",
+    "storage_bucket": "gymgenz-5ca51.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36125771736:android:b8e77ba8c73050b10094ad",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHMOKvNtLoXgKBLuYVQr3zKmKkGLhG97U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
