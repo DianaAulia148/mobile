@@ -85,11 +85,7 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
     if (result['success'] == true && result['data'] != null) {
       setState(() {
         _jadwalResponse = result['data'];
-<<<<<<< HEAD
         _jadwalByTime = _groupJadwalByTime(_jadwalResponse?.jadwals ?? []); // ⬅️ PERBAIKAN DI SINI
-=======
-        _jadwalByTime = _jadwalResponse?.getGroupedByTime() ?? _jadwalByTime;
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
         _isLoading = false;
       });
     } else {
@@ -100,7 +96,6 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
     }
   }
 
-<<<<<<< HEAD
   // ⬅️ TAMBAHKAN METHOD INI untuk grouping berdasarkan waktu
   Map<String, List<JadwalWorkout>> _groupJadwalByTime(List<JadwalWorkout> jadwals) {
     final grouped = <String, List<JadwalWorkout>>{
@@ -138,8 +133,6 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
     return grouped;
   }
 
-=======
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
   List<JadwalWorkout> _getFilteredJadwal() {
     if (_jadwalResponse == null) return [];
 
@@ -349,10 +342,7 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
                     IconButton(
                       onPressed: () {
                         // TODO: Navigate to workout detail
-<<<<<<< HEAD
                         _showWorkoutDetail(jadwal);
-=======
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
                       },
                       icon: const Icon(
                         FontAwesomeIcons.chevronRight,
@@ -388,12 +378,7 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
                       ),
                       child: Text(
                         jadwal.kategoriJadwal,
-<<<<<<< HEAD
                         style: const TextStyle(
-=======
-                        // ignore: prefer_const_constructors
-                        style: TextStyle(
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
                           color: Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -434,7 +419,6 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
                         ),
                       ],
                     ),
-<<<<<<< HEAD
                     // Tampilkan workout info jika ada
                     if (jadwal.workout != null) ...[
                       const SizedBox(height: 8),
@@ -468,8 +452,6 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
                         ),
                       ),
                     ],
-=======
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
                   ],
                 ),
               ],
@@ -480,7 +462,6 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
     );
   }
 
-<<<<<<< HEAD
   Color _getWorkoutStatusColor(String status) {
     switch (status) {
       case 'selesai':
@@ -630,8 +611,6 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
     );
   }
 
-=======
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -767,11 +746,7 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
                         const SizedBox(width: 6),
                         Text(
                           _jadwalResponse != null
-<<<<<<< HEAD
                               ? "${_jadwalResponse!.totalSchedules} Workouts" // ⬅️ PERBAIKAN DI SINI
-=======
-                              ? "${_jadwalResponse!.total} Workouts"
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
                               : "0 Workouts",
                           style: const TextStyle(
                             color: PurplePalette.lavender,
@@ -821,8 +796,4 @@ class _PenjadwalanPageState extends State<PenjadwalanPage> {
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
