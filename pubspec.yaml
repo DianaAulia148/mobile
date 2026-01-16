@@ -45,7 +45,10 @@ dependencies:
   # =========================
   image_picker: ^1.0.7
   camera: ^0.11.0
+<<<<<<< HEAD
   camera_platform_interface: ^2.12.3
+=======
+>>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
 
 
   # =========================
@@ -60,7 +63,10 @@ dependencies:
 
   # TFLite (AMAN UNTUK DART 3)
   tflite_flutter: ^0.10.4
+<<<<<<< HEAD
   tflite_flutter_helper: ^0.4.3+1
+=======
+>>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
 
 
   # =========================
@@ -79,8 +85,11 @@ dependencies:
   # PERMISSIONS
   # =========================
   permission_handler: ^11.0.1
+<<<<<<< HEAD
   image: ^4.7.2
   image_picker_for_web: ^1.0.2
+=======
+>>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
 
 dev_dependencies:
   flutter_test:
@@ -93,7 +102,11 @@ flutter:
   assets:
     - assets/
     - assets/images/google_logo.png
+<<<<<<< HEAD
     - assets/models/push-up/pushup_model.tflite
     - assets/models/push-up/meta.json
     - assets/models/push-up/scaler.json
     - assets/models/push-up/history.json
+=======
+    - assets/models/
+>>>>>>> 441b0de51d7c29b5e6216c60163c8fd2f6fb9907
